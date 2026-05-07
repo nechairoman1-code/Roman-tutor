@@ -996,18 +996,6 @@ async function submitForm() {
     alert('Ошибка отправки. Пожалуйста, напишите напрямую в Telegram: @RomanArgentina');
   }
 }
-  if (!messenger && !email && !phone) {
-    alert('Укажите хотя бы один способ связи: мессенджер, email или телефон.');
-    return;
-  }
-  if (messenger && !contact) {
-    alert('Укажите ник или номер для выбранного мессенджера.');
-    return;
-  }
-
-  document.getElementById('form-area').style.display = 'none';
-  document.getElementById('form-success').style.display = 'block';
-}
 
 renderCalendar();
 </script>
