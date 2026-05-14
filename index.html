@@ -1,19 +1,6 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <!-- Yandex.Metrika counter -->
-<script type="text/javascript">
-    (function(m,e,t,r,i,k,a){
-        m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
-        m[i].l=1*new Date();
-        for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
-        k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
-    })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=109141141', 'ym');
-
-    ym(109141141, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", referrer: document.referrer, url: location.href, accurateTrackBounce:true, trackLinks:true});
-</script>
-<noscript><div><img src="https://mc.yandex.ru/watch/109141141" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
-<!-- /Yandex.Metrika counter -->
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Английский и испанский с нуля для взрослых · Мини-группы · Роман Нечай</title>
@@ -296,7 +283,7 @@
     <div class="about-grid reveal">
       <div class="about-text">
         <p>Меня зовут Роман, и я научу вас общаться — на английском или испанском. Живу в Аргентине, провинция Буэнос-Айрес, и каждый день использую оба языка в реальной жизни.</p>
-        <p>Я дипломированный переводчик с английского (СПбГУнипт), проходил стажировку в King's School of English в Лондоне. Двенадцать лет работал в международных продажах, постоянно общаясь с партнёрами по всему миру.</p>
+        <p>Я дипломированный переводчик с английского (СПбГУ), проходил стажировку в King's School of English в Лондоне. Двенадцать лет работал в международных продажах, постоянно общаясь с партнёрами по всему миру.</p>
         <p>Испанский выучил самостоятельно и с преподавателями из Испании и Аргентины — поэтому знаю, каково это учить язык с нуля. Знаю, где трудно, и как довести вас до свободного общения.</p>
       </div>
       <div class="about-stats">
@@ -345,9 +332,9 @@
       <div class="audience-card fit">
         <h3>Подойдёт, если вы:</h3>
         <ul class="audience-list">
-          <li>Взрослый человек от 20 лет</li>
+          <li>Взрослый человек от 25 лет</li>
           <li>Учите с нуля или почти забыли школьную программу</li>
-          <li>Готовы заниматься регулярно</li>
+          <li>Готовы заниматься регулярно 6 месяцев и больше</li>
           <li>Хотите научиться живому разговорному языку</li>
           <li>Готовы учиться в группе до 4 человек</li>
         </ul>
@@ -359,7 +346,7 @@
           <li>Подготовка к ЕГЭ, ОГЭ, IELTS, TOEFL, DELE</li>
           <li>Уровни от B2 и выше</li>
           <li>Срочное натаскивание за 1–2 месяца</li>
-          <li>Индивидуальные Занятия (только группы)</li>
+          <li>Индивидуальный формат (только группы)</li>
         </ul>
       </div>
     </div>
@@ -585,7 +572,7 @@
     <div class="faq-list reveal">
       <div class="faq-item">
         <div class="faq-question" onclick="toggleFaq(this)">На какой платформе проходят занятия?</div>
-        <div class="faq-answer"><p>Материал будем проходить на интерактивной платформе Progressme. Общение - в Яндекс Телемост, при необходимости — Контур Талк. Перед уроком я высылаю ссылку.</p></div>
+        <div class="faq-answer"><p>Яндекс Телемост, при необходимости — Контур Талк или другая платформа по согласованию.</p></div>
       </div>
       <div class="faq-item">
         <div class="faq-question" onclick="toggleFaq(this)">Что если я попробую и формат не подойдёт?</div>
@@ -634,8 +621,7 @@
       <div class="loading-cal">⏳ Загружаем расписание...</div>
     </div>
     <div class="cal-legend reveal" style="margin-top:1rem">
-      <span><span class="legend-dot" style="background:rgba(37,199,100,0.5)"></span>Свободно</span>
-      <span><span class="legend-dot" style="background:rgba(201,168,76,0.6)"></span>Идёт набор</span>
+      <span><span class="legend-dot" style="background:rgba(201,168,76,0.6)"></span>Идёт набор в группу</span>
       <span><span class="legend-dot" style="background:var(--dark)"></span>Сегодня</span>
     </div>
   </div>
@@ -813,14 +799,6 @@ function classifyEvent(ev) {
       end: ev.end.dateTime || ev.end.date
     };
   }
-  if (/^свободно/i.test(title.trim())) {
-    return {
-      kind: 'free',
-      cleanName: 'Свободное окно',
-      start: ev.start.dateTime || ev.start.date,
-      end: ev.end.dateTime || ev.end.date
-    };
-  }
   return null;
 }
 
@@ -883,11 +861,8 @@ async function renderCalendar() {
     let title = '';
     if (isPast) cls += ' past';
     else if (slots.length > 0) {
-      const hasGroup = slots.some(s => s.kind === 'group');
-      const hasFree = slots.some(s => s.kind === 'free');
-      if (hasGroup && hasFree) { cls += ' mixed'; title = 'title="Свободно + набор групп"'; }
-      else if (hasGroup) { cls += ' open'; title = 'title="Идёт набор"'; }
-      else { cls += ' free'; title = 'title="Свободно"'; }
+      cls += ' open';
+      title = 'title="Идёт набор"';
       clickAttr = `onclick="showDaySlots(${d})"`;
     } else cls += ' empty-day';
     if (isToday) cls += ' today';
@@ -907,30 +882,17 @@ function showDaySlots(day) {
       <div class="slot-popup-title">${day} ${monthName} <span class="slot-tz">время по Москве</span></div>
       <div class="slot-popup-list">`;
   slots.forEach(s => {
-    if (s.kind === 'free') {
-      popupHtml += `
-        <div class="slot-card free" onclick="bookSlot('Свободно', '${s.start}', 'free')">
-          <div class="slot-time">${fmtTime(s.start)}</div>
-          <div class="slot-info">
-            <div class="slot-kind" style="color:#16a34a">🟢 Свободно</div>
-            <div class="slot-name">${s.cleanName}</div>
-            <div class="slot-spots">Нажмите чтобы записаться</div>
-          </div>
-          <div class="slot-arrow">→</div>
-        </div>`;
-    } else {
-      const left = s.total - s.taken;
-      popupHtml += `
-        <div class="slot-card group" onclick="bookSlot('${s.cleanName}', '${s.start}', 'group')">
-          <div class="slot-time">${fmtTime(s.start)}</div>
-          <div class="slot-info">
-            <div class="slot-kind">🟢 Группа</div>
-            <div class="slot-name">${s.cleanName}</div>
-            <div class="slot-spots">${s.taken} из ${s.total} мест занято · осталось ${left}</div>
-          </div>
-          <div class="slot-arrow">→</div>
-        </div>`;
-    }
+    const left = s.total - s.taken;
+    popupHtml += `
+      <div class="slot-card group" onclick="bookSlot('${s.cleanName}', '${s.start}', 'group')">
+        <div class="slot-time">${fmtTime(s.start)}</div>
+        <div class="slot-info">
+          <div class="slot-kind">🟢 Группа</div>
+          <div class="slot-name">${s.cleanName}</div>
+          <div class="slot-spots">${s.taken} из ${s.total} мест занято · осталось ${left}</div>
+        </div>
+        <div class="slot-arrow">→</div>
+      </div>`;
   });
   popupHtml += `</div></div>`;
   const wrapper = document.createElement('div');
