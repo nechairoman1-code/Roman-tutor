@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -23,6 +24,87 @@
   * { margin: 0; padding: 0; box-sizing: border-box; }
   html { scroll-behavior: smooth; }
   body { font-family: 'Mulish', sans-serif; background: var(--cream); color: var(--text); overflow-x: hidden; }
+
+  /* STICKY HEADER */
+  .sticky-header {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    background: rgba(26,26,46,0.96);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    color: #fff;
+    padding: 0.75rem 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    z-index: 100;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    transform: translateY(-110%);
+    transition: transform 0.35s ease;
+  }
+  .sticky-header.visible { transform: translateY(0); }
+  .sh-left { display: flex; align-items: center; gap: 0.85rem; min-width: 0; }
+  .sh-name { font-family: 'Playfair Display', serif; font-size: 1.05rem; font-weight: 700; color: #fff; white-space: nowrap; }
+  .sh-rating { font-size: 0.8rem; color: rgba(255,255,255,0.6); white-space: nowrap; }
+  .sh-rating strong { color: var(--gold); font-weight: 700; }
+  .sh-cta {
+    background: var(--gold);
+    color: var(--dark);
+    text-decoration: none;
+    padding: 0.55rem 1.15rem;
+    border-radius: 99px;
+    font-weight: 700;
+    font-size: 0.82rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    transition: all 0.2s;
+    flex-shrink: 0;
+  }
+  .sh-cta:hover { transform: translateY(-1px); box-shadow: 0 6px 16px rgba(201,168,76,0.4); }
+  @media(max-width:520px){
+    .sh-name { font-size: 0.95rem; }
+    .sh-rating { display: none; }
+    .sh-cta { padding: 0.5rem 0.9rem; font-size: 0.75rem; }
+  }
+
+  /* FLOATING CTA — плавающая кнопка проверки расписания */
+  .float-cta {
+    position: fixed;
+    bottom: 1.5rem;
+    right: 1.5rem;
+    background: var(--gold);
+    color: var(--dark);
+    padding: 0.95rem 1.5rem;
+    border-radius: 99px;
+    text-decoration: none;
+    font-family: 'Mulish', sans-serif;
+    font-weight: 700;
+    font-size: 0.85rem;
+    letter-spacing: 0.05em;
+    box-shadow: 0 12px 32px rgba(201,168,76,0.45), 0 0 0 0 rgba(201,168,76,0.45);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    z-index: 99;
+    transition: transform 0.25s, box-shadow 0.25s, opacity 0.3s;
+    animation: pulseGlow 2.4s infinite;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .float-cta.visible { opacity: 1; pointer-events: auto; }
+  .float-cta:hover { transform: translateY(-3px) scale(1.03); animation-play-state: paused; }
+  .float-cta-icon { font-size: 1.1rem; line-height: 1; }
+  .float-cta-text { line-height: 1.2; }
+  @keyframes pulseGlow {
+    0%, 100% { box-shadow: 0 12px 32px rgba(201,168,76,0.45), 0 0 0 0 rgba(201,168,76,0.5); }
+    50%      { box-shadow: 0 12px 32px rgba(201,168,76,0.45), 0 0 0 14px rgba(201,168,76,0); }
+  }
+  @media(max-width:520px){
+    .float-cta { bottom: 1rem; right: 1rem; padding: 0.85rem 1.15rem; font-size: 0.78rem; }
+    .float-cta-text-long { display: none; }
+  }
 
   /* HERO */
   .hero { min-height: 100vh; background: var(--dark); color: #fff; display: flex; align-items: center; justify-content: center; padding: 3rem 1.5rem; position: relative; overflow: hidden; }
@@ -255,6 +337,21 @@
 </style>
 </head>
 <body>
+
+<!-- STICKY HEADER (появляется при прокрутке) -->
+<div class="sticky-header" id="sticky-header">
+  <div class="sh-left">
+    <span class="sh-name">Роман Нечай</span>
+    <span class="sh-rating">⭐ <strong>5.0</strong> · 50 отзывов</span>
+  </div>
+  <a href="#signup" class="sh-cta" onclick="trackGoal('sticky_cta_click')">Записаться</a>
+</div>
+
+<!-- FLOATING CTA (плавающая кнопка проверки расписания) -->
+<a href="#schedule" class="float-cta" id="float-cta" onclick="trackGoal('float_cta_click')">
+  <span class="float-cta-icon">📅</span>
+  <span class="float-cta-text"><span class="float-cta-text-long">Проверить </span>свободные места</span>
+</a>
 
 <!-- HERO -->
 <section class="hero">
@@ -713,6 +810,40 @@ const observer = new IntersectionObserver(entries => {
   entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
 }, { threshold: 0.1 });
 document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+// Sticky header + плавающая кнопка — появление при прокрутке
+(function setupStickyAndFloat() {
+  const stickyHeader = document.getElementById('sticky-header');
+  const floatCta = document.getElementById('float-cta');
+  const heroEl = document.querySelector('.hero');
+  const scheduleEl = document.getElementById('schedule');
+  const bookingEl = document.getElementById('signup');
+
+  function update() {
+    const scrollY = window.scrollY || window.pageYOffset;
+    const heroH = heroEl ? heroEl.offsetHeight : 600;
+
+    // Sticky header: показываем после hero
+    if (scrollY > heroH * 0.7) stickyHeader.classList.add('visible');
+    else stickyHeader.classList.remove('visible');
+
+    // Плавающая кнопка: показываем после hero, но скрываем когда в зоне расписания/формы
+    const winH = window.innerHeight;
+    const viewportBottom = scrollY + winH;
+    const scheduleTop = scheduleEl ? scheduleEl.offsetTop : Infinity;
+    const bookingBottom = bookingEl ? (bookingEl.offsetTop + bookingEl.offsetHeight) : Infinity;
+
+    const afterHero = scrollY > heroH * 0.5;
+    const inScheduleOrBookingArea = viewportBottom > scheduleTop && scrollY < bookingBottom;
+
+    if (afterHero && !inScheduleOrBookingArea) floatCta.classList.add('visible');
+    else floatCta.classList.remove('visible');
+  }
+
+  window.addEventListener('scroll', update, { passive: true });
+  window.addEventListener('resize', update);
+  update();
+})();
 
 let currentPhoto = 0;
 let photoInterval;
